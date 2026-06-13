@@ -1,19 +1,26 @@
 #include <gtest/gtest.h>
 
-#include "PiSubmarine/Depth/Telemetry/Api/IProviderMock.h"
-#include "PiSubmarine/Depth/Telemetry/Protobuf/Deserializer.h"
-#include "PiSubmarine/Depth/Telemetry/Protobuf/Serializer.h"
+#include "PiSubmarine/Lamp/Telemetry/Api/IProviderMock.h"
+#include "PiSubmarine/Lamp/Telemetry/Protobuf/Deserializer.h"
+#include "PiSubmarine/Lamp/Telemetry/Protobuf/Serializer.h"
 #include "PiSubmarine/Telemetry/Api/IRawSourceMock.h"
 
-namespace PiSubmarine::Depth::Telemetry::Protobuf
+namespace PiSubmarine::Lamp::Telemetry::Protobuf
 {
-    TEST(SerializerTest, RoundTripsDepthState)
+    TEST(SerializerTest, RoundTripsLampStatus)
     {
         Api::IProviderMock providerMock;
-        const Api::State expectedState{.Depth = 3.5_m};
+        const Api::Status expectedStatus{
+            .IsActive = true,
+            .HasOpenLoadFault = false,
+            .HasOvercurrentFault = true,
+            .HasOvertemperatureShutdownFault = false,
+            .HasUndervoltageFault = true,
+            .HasOvervoltageFault = false,
+            .HasOvertemperatureWarning = true};
 
-        EXPECT_CALL(providerMock, GetState())
-            .WillOnce(testing::Return(Error::Api::Result<Api::State>(expectedState)));
+        EXPECT_CALL(providerMock, GetStatus())
+            .WillOnce(testing::Return(Error::Api::Result<Api::Status>(expectedStatus)));
 
         Serializer serializer(providerMock);
         const auto rawResult = serializer.GetRaw();
@@ -26,9 +33,9 @@ namespace PiSubmarine::Depth::Telemetry::Protobuf
             .WillOnce(testing::Return(Error::Api::Result<std::vector<std::byte>>(*rawResult)));
 
         Deserializer deserializer(rawSourceMock);
-        const auto stateResult = deserializer.GetState();
+        const auto statusResult = deserializer.GetStatus();
 
-        ASSERT_TRUE(stateResult.has_value());
-        EXPECT_EQ(*stateResult, expectedState);
+        ASSERT_TRUE(statusResult.has_value());
+        EXPECT_EQ(*statusResult, expectedStatus);
     }
 }

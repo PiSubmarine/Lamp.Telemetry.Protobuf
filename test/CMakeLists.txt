@@ -5,9 +5,9 @@ include(FetchContent)
 project(${PISUBMARINE_MODULE_NAME}.Test LANGUAGES CXX)
 
 set(${PISUBMARINE_MODULE_NAME}.Test.Sources
-        "PiSubmarine/Depth/Telemetry/Protobuf/DeserializerTest.cpp"
-        "PiSubmarine/Depth/Telemetry/Protobuf/ErrorCodeTest.cpp"
-        "PiSubmarine/Depth/Telemetry/Protobuf/SerializerTest.cpp")
+        "PiSubmarine/Lamp/Telemetry/Protobuf/DeserializerTest.cpp"
+        "PiSubmarine/Lamp/Telemetry/Protobuf/ErrorCodeTest.cpp"
+        "PiSubmarine/Lamp/Telemetry/Protobuf/SerializerTest.cpp")
 
 enable_testing()
 
@@ -17,9 +17,9 @@ add_executable(${PISUBMARINE_MODULE_NAME}.Test ${${PISUBMARINE_MODULE_NAME}.Test
 PiSubmarineInitTarget(${PISUBMARINE_MODULE_NAME}.Test)
 
 target_link_libraries(${PISUBMARINE_MODULE_NAME}.Test PRIVATE ${PISUBMARINE_MODULE_NAME})
-target_link_libraries(${PISUBMARINE_MODULE_NAME}.Test PRIVATE PiSubmarine.Depth.Telemetry.Api.Mock)
+target_link_libraries(${PISUBMARINE_MODULE_NAME}.Test PRIVATE PiSubmarine.Lamp.Telemetry.Api.Mock)
 target_link_libraries(${PISUBMARINE_MODULE_NAME}.Test PRIVATE PiSubmarine.Telemetry.Api.Mock)
-target_link_libraries(${PISUBMARINE_MODULE_NAME}.Test PRIVATE GTest::gtest_main)
+target_link_libraries(${PISUBMARINE_MODULE_NAME}.Test PRIVATE GTest::gmock_main)
 include(GoogleTest)
 if(CMAKE_CROSSCOMPILING)
     gtest_add_tests(TARGET ${PISUBMARINE_MODULE_NAME}.Test)

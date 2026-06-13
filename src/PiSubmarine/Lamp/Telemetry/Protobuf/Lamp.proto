@@ -1,8 +1,14 @@
-syntax = "proto3";
+syntax = "proto2";
 
-package pisubmarine.depth.telemetry.protobuf;
+package pisubmarine.lamp.telemetry.protobuf;
 
-message State
+message Status
 {
-  optional double depth_meters = 1;
+  optional bool is_active = 1;
+  optional bool has_open_load_fault = 2;
+  optional bool has_overcurrent_fault = 3;
+  optional bool has_overtemperature_shutdown_fault = 4;
+  optional bool has_undervoltage_fault = 5;
+  optional bool has_overvoltage_fault = 6;
+  optional bool has_overtemperature_warning = 7;
 }

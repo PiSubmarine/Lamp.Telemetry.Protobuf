@@ -2,7 +2,7 @@
 
 #include <system_error>
 
-namespace PiSubmarine::Depth::Telemetry::Protobuf
+namespace PiSubmarine::Lamp::Telemetry::Protobuf
 {
     enum class ErrorCode
     {
@@ -17,7 +17,7 @@ namespace PiSubmarine::Depth::Telemetry::Protobuf
 namespace std
 {
     template<>
-    struct is_error_code_enum<PiSubmarine::Depth::Telemetry::Protobuf::ErrorCode> : true_type
+    struct is_error_code_enum<PiSubmarine::Lamp::Telemetry::Protobuf::ErrorCode> : true_type
     {
     };
 }

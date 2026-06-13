@@ -1,14 +1,14 @@
-#include "PiSubmarine/Depth/Telemetry/Protobuf/Deserializer.h"
+#include "PiSubmarine/Lamp/Telemetry/Protobuf/Deserializer.h"
 
-#include "Depth.pb.h"
-#include "PiSubmarine/Depth/Telemetry/Protobuf/ErrorCode.h"
+#include "Lamp.pb.h"
+#include "PiSubmarine/Lamp/Telemetry/Protobuf/ErrorCode.h"
 #include "PiSubmarine/Error/Api/MakeError.h"
 
-namespace PiSubmarine::Depth::Telemetry::Protobuf
+namespace PiSubmarine::Lamp::Telemetry::Protobuf
 {
     namespace
     {
-        [[nodiscard]] Error::Api::Error MakeDepthTelemetryError(
+        [[nodiscard]] Error::Api::Error MakeLampTelemetryError(
             const Error::Api::ErrorCondition condition,
             const ErrorCode code)
         {
@@ -21,7 +21,7 @@ namespace PiSubmarine::Depth::Telemetry::Protobuf
     {
     }
 
-    Error::Api::Result<Api::State> Deserializer::GetState() const
+    Error::Api::Result<Api::Status> Deserializer::GetStatus() const
     {
         const auto rawResult = m_RawSource.GetRaw();
         if (!rawResult.has_value())
@@ -29,20 +29,23 @@ namespace PiSubmarine::Depth::Telemetry::Protobuf
             return std::unexpected(rawResult.error());
         }
 
-        ::pisubmarine::depth::telemetry::protobuf::State protoState;
-        if (!protoState.ParseFromArray(reinterpret_cast<const char*>(rawResult->data()), static_cast<int>(rawResult->size())))
+        ::pisubmarine::lamp::telemetry::protobuf::Status protoStatus;
+        if (!protoStatus.ParseFromArray(reinterpret_cast<const char*>(rawResult->data()), static_cast<int>(rawResult->size())))
         {
-            return std::unexpected(MakeDepthTelemetryError(
+            return std::unexpected(MakeLampTelemetryError(
                 Error::Api::ErrorCondition::ContractError,
                 ErrorCode::DeserializationFailed));
         }
 
-        Api::State state{};
-        if (protoState.has_depth_meters())
-        {
-            state.Depth = Meters{protoState.depth_meters()};
-        }
+        Api::Status status{
+            .IsActive = protoStatus.is_active(),
+            .HasOpenLoadFault = protoStatus.has_open_load_fault(),
+            .HasOvercurrentFault = protoStatus.has_overcurrent_fault(),
+            .HasOvertemperatureShutdownFault = protoStatus.has_overtemperature_shutdown_fault(),
+            .HasUndervoltageFault = protoStatus.has_undervoltage_fault(),
+            .HasOvervoltageFault = protoStatus.has_overvoltage_fault(),
+            .HasOvertemperatureWarning = protoStatus.has_overtemperature_warning()};
 
-        return state;
+        return status;
     }
 }

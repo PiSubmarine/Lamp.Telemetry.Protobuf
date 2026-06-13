@@ -2,11 +2,11 @@
 
 #include <gtest/gtest.h>
 
-#include "PiSubmarine/Depth/Telemetry/Protobuf/Deserializer.h"
-#include "PiSubmarine/Depth/Telemetry/Protobuf/ErrorCode.h"
+#include "PiSubmarine/Lamp/Telemetry/Protobuf/Deserializer.h"
+#include "PiSubmarine/Lamp/Telemetry/Protobuf/ErrorCode.h"
 #include "PiSubmarine/Telemetry/Api/IRawSourceMock.h"
 
-namespace PiSubmarine::Depth::Telemetry::Protobuf
+namespace PiSubmarine::Lamp::Telemetry::Protobuf
 {
     TEST(DeserializerTest, RejectsInvalidPayload)
     {
@@ -18,7 +18,7 @@ namespace PiSubmarine::Depth::Telemetry::Protobuf
                 std::vector<std::byte>(payload.begin(), payload.end()))));
 
         Deserializer deserializer(rawSourceMock);
-        const auto result = deserializer.GetState();
+        const auto result = deserializer.GetStatus();
 
         ASSERT_FALSE(result.has_value());
         EXPECT_EQ(result.error().Cause, make_error_code(ErrorCode::DeserializationFailed));
