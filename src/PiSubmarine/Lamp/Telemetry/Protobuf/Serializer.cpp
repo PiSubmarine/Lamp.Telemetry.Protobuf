@@ -22,7 +22,7 @@ namespace PiSubmarine::Lamp::Telemetry::Protobuf
         }
 
         ::pisubmarine::lamp::telemetry::protobuf::Status protoStatus;
-        protoStatus.set_is_active(statusResult->IsActive);
+        protoStatus.set_intensity(static_cast<double>(statusResult->Intensity));
         protoStatus.set_has_open_load_fault(statusResult->HasOpenLoadFault);
         protoStatus.set_has_overcurrent_fault(statusResult->HasOvercurrentFault);
         protoStatus.set_has_overtemperature_shutdown_fault(statusResult->HasOvertemperatureShutdownFault);

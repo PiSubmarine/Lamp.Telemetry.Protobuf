@@ -4,7 +4,7 @@ package pisubmarine.lamp.telemetry.protobuf;
 
 message Status
 {
-  optional bool is_active = 1;
+  optional double intensity = 1;
   optional bool has_open_load_fault = 2;
   optional bool has_overcurrent_fault = 3;
   optional bool has_overtemperature_shutdown_fault = 4;

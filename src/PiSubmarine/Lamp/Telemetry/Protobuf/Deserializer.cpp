@@ -37,14 +37,24 @@ namespace PiSubmarine::Lamp::Telemetry::Protobuf
                 ErrorCode::DeserializationFailed));
         }
 
-        Api::Status status{
-            .IsActive = protoStatus.is_active(),
-            .HasOpenLoadFault = protoStatus.has_open_load_fault(),
-            .HasOvercurrentFault = protoStatus.has_overcurrent_fault(),
-            .HasOvertemperatureShutdownFault = protoStatus.has_overtemperature_shutdown_fault(),
-            .HasUndervoltageFault = protoStatus.has_undervoltage_fault(),
-            .HasOvervoltageFault = protoStatus.has_overvoltage_fault(),
-            .HasOvertemperatureWarning = protoStatus.has_overtemperature_warning()};
+        Api::Status status{};
+        try
+        {
+            status = Api::Status{
+                .Intensity = NormalizedFraction{protoStatus.intensity()},
+                .HasOpenLoadFault = protoStatus.has_open_load_fault(),
+                .HasOvercurrentFault = protoStatus.has_overcurrent_fault(),
+                .HasOvertemperatureShutdownFault = protoStatus.has_overtemperature_shutdown_fault(),
+                .HasUndervoltageFault = protoStatus.has_undervoltage_fault(),
+                .HasOvervoltageFault = protoStatus.has_overvoltage_fault(),
+                .HasOvertemperatureWarning = protoStatus.has_overtemperature_warning()};
+        }
+        catch (...)
+        {
+            return std::unexpected(MakeLampTelemetryError(
+                Error::Api::ErrorCondition::ContractError,
+                ErrorCode::InvalidPayload));
+        }
 
         return status;
     }

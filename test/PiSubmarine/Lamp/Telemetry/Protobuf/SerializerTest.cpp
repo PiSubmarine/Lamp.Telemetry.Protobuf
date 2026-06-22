@@ -11,7 +11,7 @@ namespace PiSubmarine::Lamp::Telemetry::Protobuf
     {
         Api::IProviderMock providerMock;
         const Api::Status expectedStatus{
-            .IsActive = true,
+            .Intensity = NormalizedFraction{0.7},
             .HasOpenLoadFault = false,
             .HasOvercurrentFault = true,
             .HasOvertemperatureShutdownFault = false,
